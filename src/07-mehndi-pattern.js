@@ -54,20 +54,60 @@
  */
 export function repeatChar(char, n) {
   // Your code here
+  if (typeof char !== "string" || char.length === 0) return "";
+  if (n <= 0) return "";
+  return char + repeatChar(char, n - 1)
 }
 
 export function sumNestedArray(arr) {
   // Your code here
+  if (!Array.isArray(arr) || arr.length === 0) return 0
+  const myArr = arr.flat(Infinity)
+  let sum = 0
+  for (let i = 0; i < myArr.length; i++) {
+    if (!Number.isInteger(myArr[i])) continue
+    sum += myArr[i]
+  }
+  return sum
 }
 
 export function flattenArray(arr) {
   // Your code here
+  if (!Array.isArray(arr)) return []
+  return (arr.flat(Infinity))
 }
 
 export function isPalindrome(str) {
   // Your code here
+  if (typeof str !== 'string') return false
+  if (str.length <= 1) return true
+  str = str.toLowerCase()
+
+  let i = 0;
+  let j = str.length - 1
+  while (i <= j) {
+    if (str.charAt(i) !== str.charAt(j)) {
+      return false
+    }
+    i++;
+    j--;
+
+  }
+
+  return true
 }
 
 export function generatePattern(n) {
   // Your code here
+  if (!Number.isInteger(n) || n <= 0) return []
+
+  function buildAscending(k) {
+    if (k === 1) return ["*"]
+
+    return [...buildAscending(k - 1), "*".repeat(k)]
+  }
+
+  const ascending = buildAscending(n)
+  const descending = ascending.slice(0, -1).reverse()
+  return [...ascending, ...descending]
 }

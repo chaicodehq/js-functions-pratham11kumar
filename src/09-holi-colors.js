@@ -55,20 +55,48 @@
  */
 export function mixColors(color1, color2) {
   // Your code here
+ if (typeof color1 !== 'object' || typeof color2 !== 'object' || color1 === null || color2 === null) return null
+  const r = Math.round((color1.r + color2.r) / 2)
+  const g = Math.round((color1.g + color2.g) / 2)
+  const b = Math.round((color1.b + color2.b) / 2)
+  return { name: `${color1.name}-${color2.name}`, r, g, b }
+
 }
 
 export function adjustBrightness(color, factor) {
   // Your code here
+  if (color === null || typeof factor !== 'number') return null
+  let r = Math.round(color.r * factor)
+  r = r > 255 ? 255 : r
+  let g = Math.round(color.g * factor)
+  g = g > 255 ? 255 : g
+  let b = Math.round(color.b * factor)
+  b = b > 255 ? 255 : b
+  return { name: color.name, r, g, b }
 }
 
 export function addToPalette(palette, color) {
   // Your code here
+  if(!Array.isArray(palette)) return [color]
+  if(typeof color !== 'object' || color === null) return [...palette]
+  return [...palette, color]
 }
 
 export function removeFromPalette(palette, colorName) {
   // Your code here
+  if(!Array.isArray(palette)) return []
+  return palette.filter((c) => c.name !== colorName)
 }
 
 export function mergePalettes(palette1, palette2) {
   // Your code here
+  if(!Array.isArray(palette1)) palette1 = []
+  if(!Array.isArray(palette2)) palette2 = []
+
+  const names = new Set([...palette1, ...palette2].map((c) => c.name))
+  return [...names].map((name) => {
+    const c1 = palette1.find((c) => c.name === name)
+    const c2 = palette2.find((c) => c.name === name)
+    return c1 ? c1 : c2
+  })
 }

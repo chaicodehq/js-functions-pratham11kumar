@@ -46,17 +46,25 @@
  *   // => "Amit is coming!"
  */
 export function processGuests(guests, filterFn) {
-  // Your code here
+ if(!Array.isArray(guests) || typeof filterFn !== 'function') return []
+    return guests.filter((guest) => filterFn(guest))
 }
 
 export function notifyGuests(guests, notifyCallback) {
   // Your code here
+  if(!Array.isArray(guests) || typeof notifyCallback !== 'function')  return []
+  return guests.map((guest) => notifyCallback(guest))
 }
 
 export function handleRSVP(guest, onAccept, onDecline) {
   // Your code here
+  if(guest === null || typeof guest === 'undefined' || typeof onAccept !== 'function' || typeof onDecline !== 'function' || !['yes', 'no'].includes(guest.rsvp)) return null
+
+  return guest.rsvp === 'yes' ? onAccept(guest) : onDecline(guest)
 }
 
 export function transformGuestList(guests, ...transformFns) {
   // Your code here
+  if(!Array.isArray(guests)) return []
+  return transformFns.reduce((acc, fn) => fn(acc), guests)
 }

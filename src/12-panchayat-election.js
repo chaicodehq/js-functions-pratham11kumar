@@ -64,17 +64,83 @@
  *   // => "voted!"
  */
 export function createElection(candidates) {
-  // Your code here
+   const votes = {};
+  const registered = new Set();
+  const voted = new Set();
+
+  function registerVoter(voter) {
+    if (!voter) return false;
+    if (registered.has(voter.id) || !voter.age || voter.age < 18) return false;
+    registered.add(voter.id);
+    return true;
+  }
+
+
+
+  function castVote(voterId, candidateId, onSuccess, onError) {
+    if (!registered.has(voterId) || !candidates.some(c => c.id === candidateId)) {
+      return onError("Invalid voter or candidate");
+    }
+
+
+    if (voted.has(voterId)) return onError("Voter has already voted");
+
+
+    if (!(votes[candidateId])) {
+      votes[candidateId] = 0;
+    }
+
+
+    votes[candidateId]++;
+    voted.add(voterId);
+
+    return onSuccess({ voterId, candidateId });
+  }
+
+  function getResults(sortFn) {
+    const results = candidates.map((candidate) => ({
+      ...candidate,
+      votes: votes[candidate.id]
+    }))
+
+    if (sortFn) return results.sort(sortFn);
+
+    return results.sort((a, b) => b.votes - a.votes);
+  }
+
+  function getWinner() {
+    const results = getResults();
+    if (results.length === 0) return null;
+    if (voted.size === 0) return null
+    const ties = results.filter(r => r.votes === results[0].votes);
+    if (ties.length === 0) return results[0];
+    return ties[0];
+  }
+
+  return {
+    registerVoter,
+    castVote,
+    getResults,
+    getWinner,
+  };
 }
 
 export function createVoteValidator(rules) {
-  // Your code here
+  return function validateVoter(voter) {
+    const valid = rules.requiredFields.every(field => voter[field]) && voter.age >= rules.minAge;
+    return { valid, reason: valid ? "" : `Invalid voter: ${voter.name} is ${voter.age} years old` };
+  };
 }
 
 export function countVotesInRegions(regionTree) {
-  // Your code here
+  if (!regionTree) return 0;
+  return regionTree.votes + regionTree.subRegions.reduce((acc, region) => acc + countVotesInRegions(region), 0);
 }
 
 export function tallyPure(currentTally, candidateId) {
-  // Your code here
+
+  return {
+    ...currentTally,
+    [candidateId]: (currentTally[candidateId] || 0) + 1
+  };
 }
